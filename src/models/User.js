@@ -30,7 +30,7 @@ const User = sequelize.define("User", {
         defaultValue: "employee",
     },
     status: {
-        type: DataTypes.ENUM("active", "blocked"),
+        type: DataTypes.ENUM("active", "inactive"),
         defaultValue: "active",
     },
     profilePhoto: {

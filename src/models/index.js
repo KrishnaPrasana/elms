@@ -5,18 +5,55 @@ import LeaveType from "./LeaveType.js";
 import LeaveApplication from "./LeaveApplication.js";
 import UserDepartment from "./UserDepartment.js";
 
+// ----------------------------
+// USER <-> DEPARTMENT (M:N)
+// ----------------------------
+User.belongsToMany(Department, {
+    through: UserDepartment,
+    foreignKey: "userId",
+});
 
-// Department - User (1:N)
-Department.hasMany(User, { foreignKey: "departmentId" });
-User.belongsTo(Department, { foreignKey: "departmentId" });
+Department.belongsToMany(User, {
+    through: UserDepartment,
+    foreignKey: "departmentId",
+});
 
-// User - LeaveApplication (1:N)
-User.hasMany(LeaveApplication, { foreignKey: "employeeId" });
-LeaveApplication.belongsTo(User, { foreignKey: "employeeId" });
+// ----------------------------
+// USER -> LEAVE APPLICATION (1:N)
+// ----------------------------
+User.hasMany(LeaveApplication, {
+    foreignKey: "userId",
+});
+LeaveApplication.belongsTo(User, {
+    foreignKey: "userId",
+});
 
-// LeaveType - LeaveApplication (1:N)
-LeaveType.hasMany(LeaveApplication, { foreignKey: "leaveTypeId" });
-LeaveApplication.belongsTo(LeaveType, { foreignKey: "leaveTypeId" });
+// ----------------------------
+// LEAVETYPE -> LEAVE APPLICATION (1:N)
+// ----------------------------
+LeaveType.hasMany(LeaveApplication, {
+    foreignKey: "leaveTypeId",
+});
+LeaveApplication.belongsTo(LeaveType, {
+    foreignKey: "leaveTypeId",
+});
 
-// Export models
-export { sequelize, User, Department, LeaveType, LeaveApplication, UserDepartment };
+// ----------------------------
+// DEPARTMENT -> LEAVE APPLICATION (1:N)
+// Optional linking
+// ----------------------------
+Department.hasMany(LeaveApplication, {
+    foreignKey: "departmentId",
+});
+LeaveApplication.belongsTo(Department, {
+    foreignKey: "departmentId",
+});
+
+export {
+    sequelize,
+    User,
+    Department,
+    LeaveType,
+    LeaveApplication,
+    UserDepartment
+};

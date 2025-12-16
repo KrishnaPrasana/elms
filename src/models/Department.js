@@ -14,6 +14,12 @@ const Department = sequelize.define("Department", {
         unique: true,
         allowNull: false,
     },
+
+    shortName: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+    }
 });
 
 Department.belongsToMany(User, {

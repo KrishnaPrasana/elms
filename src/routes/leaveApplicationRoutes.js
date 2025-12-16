@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(protect);
 
 // Employee applies for leave
-router.post("/", authorizeRoles("employee"), applyLeave);
+router.post("/apply", authorizeRoles("employee"), applyLeave);
 
 // Employee/Admin view leave applications
 router.get("/", authorizeRoles("employee", "admin"), getLeaveApplications);

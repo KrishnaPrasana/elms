@@ -12,7 +12,7 @@ const LeaveType = sequelize.define("LeaveType", {
         unique: true,
         allowNull: false,
     },
-    max_days: {
+    maxDays: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },

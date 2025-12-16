@@ -6,6 +6,8 @@ import authRoutes from "./routes/auth.js";
 import departmentRoutes from "./routes/departmentRoutes.js";
 import leaveTypeRoutes from "./routes/leaveTypeRoutes.js";
 import leaveAppRoutes from "./routes/leaveApplicationRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js"
+import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 
 
 
@@ -18,9 +20,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
-app.use("/api/department", departmentRoutes)
-app.use("/api/leave-type", leaveTypeRoutes)
+app.use("/api/admin/departments", departmentRoutes)
+app.use("/api/admin/leave-types", leaveTypeRoutes)
 app.use("/api/leaves", leaveAppRoutes);
+app.use("/api/employee", employeeRoutes);
+app.use("/api/admin/dashboard", adminDashboardRoutes)
 
 
 // Test route

@@ -10,11 +10,11 @@ const LeaveApplication = sequelize.define("LeaveApplication", {
         primaryKey: true,
         autoIncrement: true,
     },
-    from_date: {
+    fromDate: {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
-    to_date: {
+    toDate: {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
@@ -26,11 +26,15 @@ const LeaveApplication = sequelize.define("LeaveApplication", {
         type: DataTypes.ENUM("pending", "approved", "rejected"),
         defaultValue: "pending",
     },
-    applied_on: {
+    appliedOn: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
-    admin_response_date: {
+    adminRemark: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    adminResponseDate: {
         type: DataTypes.DATE,
         allowNull: true,
     },

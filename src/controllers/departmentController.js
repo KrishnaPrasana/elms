@@ -4,13 +4,16 @@ import { Department } from "../models/index.js";
 // Create Department
 export const createDepartment = async (req, res) => {
     try {
-        const { name } = req.body;
-        if (!name) return res.status(400).json({ message: "Name is required" });
+        const { name, shortName } = req.body;
+        if (!name || !shortName) return res.status(400).json({ message: "Name and Short Name is required" });
 
         const existing = await Department.findOne({ where: { name } });
         if (existing) return res.status(400).json({ message: "Department already exists" });
 
-        const department = await Department.create({ name });
+        const existingShortName = await Department.findOne({ where: { shortName } });
+        if (existingShortName) return res.status(400).json({ message: "Department Short Name already exists" });
+
+        const department = await Department.create({ name, shortName });
         res.status(201).json({ message: "Department created", department });
     } catch (err) {
         console.error(err);

@@ -6,27 +6,28 @@ import Department from "../models/Department.js";
 // Employee applies for leave
 export const applyLeave = async (req, res) => {
     try {
-        const { leaveTypeId, departmentId, fromDate, toDate, reason } = req.body;
+        const { leaveTypeId, fromDate, toDate, reason } = req.body;
         const userId = req.user.id;
 
         if (!leaveTypeId || !fromDate || !toDate) {
             return res.status(400).json({ message: "Required fields missing" });
         }
 
+        if (new Date(fromDate) > new Date(toDate))
+            return res.status(400).json({ message: "From date cannot be after To date" });
+
         // Validate leave type
         const leaveType = await LeaveType.findByPk(leaveTypeId);
         if (!leaveType) return res.status(400).json({ message: "Invalid leave type" });
 
-        // Validate department if provided
-        if (departmentId) {
-            const dept = await Department.findByPk(departmentId);
-            if (!dept) return res.status(400).json({ message: "Invalid department" });
-        }
+        const departments = await req.user.getDepartments();
+        if (!departments.length) return res.status(400).json({ message: "User not assigned to any department" });
+
 
         const leaveApp = await LeaveApplication.create({
             userId,
             leaveTypeId,
-            departmentId,
+            departmentId: departments[0].id,
             fromDate,
             toDate,
             reason,
@@ -43,7 +44,7 @@ export const applyLeave = async (req, res) => {
 export const updateLeaveStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
+        const { status, adminRemark } = req.body;
 
         if (!["approved", "rejected"].includes(status)) {
             return res.status(400).json({ message: "Invalid status" });
@@ -54,6 +55,7 @@ export const updateLeaveStatus = async (req, res) => {
 
         await leaveApp.update({
             status,
+            adminRemark,
             adminResponseDate: new Date(),
         });
 
