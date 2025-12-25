@@ -23,7 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin/departments", departmentRoutes)
 app.use("/api/admin/leave-types", leaveTypeRoutes)
 app.use("/api/leaves", leaveAppRoutes);
-app.use("/api/employee", employeeRoutes);
+app.use("/api/admin/employees", employeeRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes)
 
 
