@@ -132,9 +132,24 @@ export const updateEmployeeStatus = async (req, res) => {
 export const getEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(id, {
+      attributes: {
+        exclude: ["password"],
+      },
+
+      include: [
+        {
+          model: Department,
+          attributes: ['id'],
+          through: { attributes: [] }, // hides UserDepartment table
+        },
+      ],
+    });
+
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
+
+    const departmentIds = user.Departments.map(d => d.id);
+    res.json({ ...user.toJSON(), departmentIds });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
