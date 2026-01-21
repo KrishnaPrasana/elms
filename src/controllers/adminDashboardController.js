@@ -7,6 +7,7 @@ export const getAdminDashboard = async (req, res) => {
         const totalEmployees = await User.count({ where: { role: "employee" } });
         const totalLeaves = await LeaveApplication.count();
         const totalDepartments = await Department.count();
+        const totalLeaveTypes = await LeaveType.count();
         const newLeaveApplications = await LeaveApplication.count({
             where: { status: "pending" }
         });
@@ -41,7 +42,9 @@ export const getAdminDashboard = async (req, res) => {
                 totalEmployees,
                 totalLeaves,
                 totalDepartments,
-                newLeaveApplications
+                newLeaveApplications,
+                totalLeaveTypes
+
             },
             recent
         });
