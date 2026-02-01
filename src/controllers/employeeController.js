@@ -7,9 +7,9 @@ import sendEmail from "../utils/mailer.js";
 //add Employee (Admin only)
 export const AddEmployee = async (req, res) => {
   try {
-    const { name, email, empId, password, departmentIds } = req.body;
+    const { name, email, departmentIds, address, city, state, country, phoneNumber, gender } = req.body;
 
-    if (!name || !email || !empId) {
+    if (!name || !email || !address || !city || !state || !country || !phoneNumber || !gender) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const role = "employee";
@@ -17,10 +17,6 @@ export const AddEmployee = async (req, res) => {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
-
-    const existingEmpId = await User.findOne({ where: { empId } });
-    if (existingEmpId)
-      return res.status(400).json({ message: "Employee ID already exists" });
 
     // Only validate departments for employees
     let departments = [];
@@ -46,9 +42,14 @@ export const AddEmployee = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      empId,
       password: hashedPassword,
       role,
+      address,
+      city,
+      state,
+      country,
+      phoneNumber,
+      gender
     });
 
     // Associate departments after user creation
