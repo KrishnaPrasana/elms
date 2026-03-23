@@ -156,3 +156,115 @@ export const getEmployee = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const updateMyProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const {
+      name,
+      address,
+      city,
+      state,
+      country,
+      phoneNumber,
+      gender,
+    } = req.body;
+
+    const user = await User.findByPk(userId);
+
+    if (!user || user.role !== "employee") {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    // Only allow specific fields
+    await user.update({
+      name,
+      address,
+      city,
+      state,
+      country,
+      phoneNumber,
+      gender,
+    });
+
+    res.json({
+      message: "Profile updated successfully",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        country: user.country,
+        phoneNumber: user.phoneNumber,
+        gender: user.gender,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const updateEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      email,
+      departmentIds,
+      address,
+      city,
+      state,
+      country,
+      phoneNumber,
+      gender,
+      dateOfBirth,
+    } = req.body;
+
+    const employee = await User.findByPk(id);
+
+    if (!employee || employee.role !== "employee") {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    // Update basic fields
+    await employee.update({
+      name,
+      email,
+      address,
+      city,
+      state,
+      country,
+      phoneNumber,
+      gender,
+      dateOfBirth,
+    });
+
+    // Update departments (if provided)
+    if (departmentIds && departmentIds.length) {
+      const departments = await Department.findAll({
+        where: { id: departmentIds },
+      });
+
+      if (departments.length !== departmentIds.length) {
+        return res
+          .status(400)
+          .json({ message: "Invalid department IDs" });
+      }
+
+      await employee.setDepartments(departments);
+    }
+
+    res.json({
+      message: "Employee updated successfully",
+      employee,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

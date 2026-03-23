@@ -7,7 +7,9 @@ import departmentRoutes from "./routes/departmentRoutes.js";
 import leaveTypeRoutes from "./routes/leaveTypeRoutes.js";
 import leaveAppRoutes from "./routes/leaveApplicationRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js"
+import employeeProfileRoutes from "./routes/employeeProfileRoutes.js"
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+import employeeDashboardRoutes from "./routes/employeeDashboardRoutes.js";
 
 
 
@@ -24,7 +26,9 @@ app.use("/api/admin/departments", departmentRoutes)
 app.use("/api/admin/leave-types", leaveTypeRoutes)
 app.use("/api/employee/leaves", leaveAppRoutes);
 app.use("/api/admin/employees", employeeRoutes);
-app.use("/api/admin/dashboard", adminDashboardRoutes)
+app.use("/api/employee", employeeProfileRoutes);
+app.use("/api/admin/dashboard", adminDashboardRoutes);
+app.use("/api/employee/dashboard", employeeDashboardRoutes);
 
 
 // Test route

@@ -74,18 +74,26 @@ export const updateLeaveStatus = async (req, res) => {
 // Employee / Admin view leave applications
 export const getLeaveApplications = async (req, res) => {
   try {
-    let leaveApps;
+    const { status } = req.query;
 
-    if (req.user.role === "admin") {
-      leaveApps = await LeaveApplication.findAll({
-        include: [User, LeaveType, Department],
-      });
-    } else {
-      leaveApps = await LeaveApplication.findAll({
-        where: { userId: req.user.id },
-        include: [LeaveType, Department],
-      });
+    let whereCondition = {};
+
+    // Role-based filtering
+    if (req.user.role !== "admin") {
+      whereCondition.userId = req.user.id;
     }
+
+    // Status filter (optional)
+    if (status) {
+      whereCondition.status = status;
+    }
+
+    const leaveApps = await LeaveApplication.findAll({
+      where: whereCondition,
+      include: req.user.role === "admin"
+        ? [User, LeaveType, Department]
+        : [LeaveType, Department],
+    });
 
     res.json(leaveApps);
   } catch (err) {

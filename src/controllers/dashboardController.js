@@ -54,3 +54,56 @@ export const getAdminDashboard = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+export const getEmployeeDashboard = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Stats (only for this employee)
+    const totalLeaves = await LeaveApplication.count({
+      where: { userId },
+    });
+
+    const approvedLeaves = await LeaveApplication.count({
+      where: { userId, status: "approved" },
+    });
+
+    const newLeaveApplications = await LeaveApplication.count({
+      where: { userId, status: "pending" },
+    });
+
+    // Recent 3 leave applications
+    const recentLeaves = await LeaveApplication.findAll({
+      where: { userId },
+      limit: 3,
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: LeaveType,
+          attributes: ["name"],
+        },
+      ],
+    });
+
+    const recent = recentLeaves.map((item) => ({
+      id: item.id,
+      leaveType: item.LeaveType?.name || "",
+      fromDate: item.fromDate,
+      toDate: item.toDate,
+      status: item.status,
+    }));
+
+    res.json({
+      stats: {
+        totalLeaves,
+        approvedLeaves,
+        newLeaveApplications,
+      },
+      recent,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
