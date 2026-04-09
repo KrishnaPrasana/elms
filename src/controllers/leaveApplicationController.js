@@ -2,6 +2,8 @@ import LeaveApplication from "../models/LeaveApplication.js";
 import LeaveType from "../models/LeaveType.js";
 import User from "../models/User.js";
 import Department from "../models/Department.js";
+import sendEmail from "../utils/mailer.js";
+
 
 // Employee applies for leave
 export const applyLeave = async (req, res) => {
@@ -57,11 +59,21 @@ export const updateLeaveStatus = async (req, res) => {
 
     const leaveApp = await LeaveApplication.findByPk(id);
     if (!leaveApp) return res.status(404).json({ message: "Leave not found" });
-
+    const user = await User.findByPk(leaveApp.userId);
     await leaveApp.update({
       status,
       adminRemark,
       adminResponseDate: new Date(),
+    });
+
+    await sendEmail({
+      to: user.email,
+      subject: "Leave Application Update",
+      html: `
+        <p>Your leave application from ${leaveApp.fromDate} to ${leaveApp.toDate} has been <strong>${status}</strong>.</p>
+        ${adminRemark ? `<p>Admin Remark: ${adminRemark}</p>` : ""}
+        
+      `,
     });
 
     res.json({ message: `Leave ${status}`, leaveApp });
